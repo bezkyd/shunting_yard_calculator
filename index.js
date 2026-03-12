@@ -28,10 +28,18 @@ function handleInput(value) {
     }
 }
 
-function normalizeExpression(expr) {
-    return expr
-        .replaceAll('x', '*')
-        .replaceAll('÷', '/');
+function appendValue(value) {
+    const lastChar = currentInput.slice(-1);
+    const operators = ['+', '-', 'x', '÷', '.'];
+
+    if (operators.includes(value) && operators.includes(lastChar)) return;
+
+    currentInput += value;
+    updateDisplay();
+}
+
+function updateDisplay() {
+    inputField.value = currentInput || '0';
 }
 
 
@@ -44,21 +52,6 @@ function allClear () {
 function deleteLast() {
     currentInput = currentInput.slice(0, -1);
     updateDisplay();    
-}
-
-
-function appendValue(value) {
-    const lastChar = currentInput.slice(-1);
-    const operators = ['+', '-', 'x', '÷'];
-
-    if (operators.includes(value) && operators.includes(lastChar)) return;
-
-    currentInput += value;
-    updateDisplay();
-}
-
-function updateDisplay() {
-    inputField.value = currentInput || '0';
 }
 
 /*
@@ -88,12 +81,18 @@ document.addEventListener('keydown', (event) => {
 
 /* --------------------------------------------------------------------
 -------------------------CALCULATE LOGIC----------------------------==*/
+function normalizeExpression(expr) {
+    return expr
+        .replaceAll('x', '*')
+        .replaceAll('÷', '/');
+}
+
 function tokenize(expression) {
     const tokens = [];
     let num = "";
 
     for (let char of expression) {
-        if (/\d/.test(char)) {
+        if (/\d/.test(char) || char === '.') {
             num += char; 
         }
         else {
