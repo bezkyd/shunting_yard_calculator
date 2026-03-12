@@ -1,3 +1,12 @@
+:root {
+    --main-color: #1c1c1c;
+    --default-buttons-color: #333;
+    --operator-buttons-color: #f59e42;
+    --top-row-buttons-color: #a5a5a5;
+    --btn-size: 61px;
+
+}
+
 *, *::after, *::before {
     margin: 0;
     padding: 0;
@@ -18,7 +27,7 @@ body {
 
 .calculator {
     width: 320px;
-    background-color: #1c1c1c;;
+    background-color: var(--main-color);;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
@@ -49,8 +58,6 @@ body {
     border-radius: 0 0 5px 5px;
 }
 
-
-
 #input-field:focus {
     outline: none;
 }
@@ -60,21 +67,20 @@ body {
   opacity: 1; /* Firefox uses a lower default opacity, so set it to 1 for full visibility */
 }
 
-
 input[type=number] {
-    -moz-appearance: textfield;
+    appearance: textfield;
 }
 
 #buttons-group {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat( 5, 1fr);
+    /* Всі ряди тепер автоматично беруть висоту зі змінної */
+    grid-auto-rows: var(--btn-size);
     gap: 12px;
-    
 }
 
 button {
-    aspect-ratio: 1 / 1;
+    height: var(--btn-size);
     border-radius: 50%;
     border: none;
     font-size: 1.4rem;
@@ -89,25 +95,21 @@ button:active {
     transform: scale(0.95);
 } 
 
-#zero {
+#zero, .bracket {
     grid-column: span 2;
-    aspect-ratio: 2 / 1;
-    border-radius: 999px;
-}
-
-.bracket {
-    grid-column: span 2;
-    aspect-ratio: 2/1;
+    /* Ширина підтягнеться сама завдяки grid-column */
+    width: 100%; 
+    /* Висота підтягнеться з button (наша змінна) */
     border-radius: 999px;
 }
 
 .top-row-buttons {
-    background: #a5a5a5;
+    background: var(--top-row-buttons-color);
     color: black;
 }
 
 .operator{
-    background-color: orange;
+    background-color: var(--operator-buttons-color);
     border-radius: 50%;
     border: none;
 }

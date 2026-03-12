@@ -14,7 +14,7 @@ buttonsGroup.addEventListener('click', (event) => {
 });
 
 function handleInput(value) {
-    const operators = ['+', '-', '/', '*', '(', ')', '.'];
+    const operators = ['+', '-', '/', '*', '(', ')', '.', 'x', '÷' ];
     if (value === "C") {
         allClear();
     } 
@@ -27,6 +27,13 @@ function handleInput(value) {
         updateDisplay();
     }
 }
+
+function normalizeExpression(expr) {
+    return expr
+        .replaceAll('x', '*')
+        .replaceAll('÷', '/');
+}
+
 
 // function isValidChar(value) { pass; }
 function allClear () { 
@@ -42,7 +49,7 @@ function deleteLast() {
 
 function appendValue(value) {
     const lastChar = currentInput.slice(-1);
-    const operators = ['+', '-', '×', '÷', '*', '/'];
+    const operators = ['+', '-', 'x', '÷'];
 
     if (operators.includes(value) && operators.includes(lastChar)) return;
 
@@ -103,7 +110,6 @@ function tokenize(expression) {
     return tokens;
 }
 
-// console.log(tokenize("as234a"));
 
 function toRPN(tokens) {
     const output = [];
@@ -154,6 +160,27 @@ function toRPN(tokens) {
     return output;
 }
 
+function insertImplicitMultiplication(tokens) {
+    const result = []
+
+    for(let i = 0; i < tokens.length; i++) {
+        const a = tokens[i];
+        const b = tokens[i + 1];
+
+        result.push(a);
+        const aIsNumber = !isNaN(a);
+        const aIsClose = a === ")";
+
+        const bIsNumber = !isNaN(b);
+        const bIsOpen = b === "(";
+
+        if((aIsNumber || aIsClose) && (bIsNumber || bIsOpen)) {
+            result.push('*');
+        }
+    }
+    return result;
+}
+
 function evalRPN(tokens) {
     const stack = [];
 
@@ -177,7 +204,12 @@ function evalRPN(tokens) {
 }
 
 function calculate(expr) {
-    const tokens = tokenize(expr);
+    const normalized = normalizeExpression(expr);
+
+    const tokens = tokenize(normalized);
+    console.log(tokens);
+    insertImplicitMultiplication(tokens);
+    console.log(insertImplicitMultiplication);
     const rpn = toRPN(tokens);
     return evalRPN(rpn);
 }
