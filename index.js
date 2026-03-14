@@ -1,8 +1,17 @@
 const inputField = document.querySelector("#input-field");
 const buttonsGroup = document.querySelector("#buttons-group");
+const toggleBtn = document.querySelector("#theme-toggle");
+const toggleIcon = document.querySelector("img");
 
 let currentInput = '';
 
+toggleBtn.addEventListener("click", () => {
+    document.documentElement.classList.toggle("white");
+
+    if(document.documentElement.classList.contains("white")) {
+        toggleIcon = ""
+    }
+})
 
 buttonsGroup.addEventListener('click', (event) => {
     const button = event.target;
@@ -23,14 +32,41 @@ function handleInput(value) {
         appendValue(value);
     }
     else if (value === "=") { 
-        currentInput = calculate(currentInput);
+        console.log(currentInput);
+        currentInput = String(calculate(currentInput));
         updateDisplay();
     }
 }
 
+document.addEventListener('keydown', (event) => {
+    const key = event.key; // Получаем символ нажатой клавиши
+
+    // 1. Цифры и операторы (совпадают с текстом на кнопках)
+    const validKeys = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '+', '-', '(', ')'];
+    
+    // 2. Специальные клавиши
+    if (validKeys.includes(key)) {
+        handleInput(key);
+    } else if (key === 'Enter' || key === '=') {
+        event.preventDefault(); // Чтобы не скроллило страницу
+        handleInput('=');
+    } else if (key === 'Backspace') {
+        handleInput('DEL');
+    } else if (key === 'Escape') {
+        handleInput('C');
+    } else if (key === '*') {
+        handleInput('x')
+    } else if (key === '/') {
+        event.preventDefault();
+        handleInput(key);
+    } else if (key === ' ') {
+        handleInput(key);
+    }
+}); 
+
 function appendValue(value) {
     const lastChar = currentInput.slice(-1);
-    const operators = ['+', '-', 'x', '÷', '.'];
+    const operators = ['+', '-', 'x', '÷', '.', '/'];
 
     if (operators.includes(value) && operators.includes(lastChar)) return;
 
@@ -50,34 +86,9 @@ function allClear () {
 }
 
 function deleteLast() {
-    currentInput = currentInput.slice(0, -1);
+    currentInput = currentInput.slice(0, -1); 
     updateDisplay();    
 }
-
-/*
-
-document.addEventListener('keydown', (event) => {
-    const key = event.key; // Получаем символ нажатой клавиши
-
-    // 1. Цифры и операторы (совпадают с текстом на кнопках)
-    const validKeys = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '+', '-', '/', '*', '(', ')'];
-    
-    // 2. Специальные клавиши
-    if (validKeys.includes(key)) {
-        handleInput(key);
-    } else if (key === 'Enter' || key === '=') {
-        event.preventDefault(); // Чтобы не скроллило страницу
-        handleInput('=');
-    } else if (key === 'Backspace') {
-        handleInput('DEL');
-    } else if (key === 'Escape') {
-        handleInput('C');
-    } else if (key === '*') {
-        handleInput('x'); // Если на кнопке умножения у вас 'x', а не '*'
-    }
-}); 
-*/
-
 
 /* --------------------------------------------------------------------
 -------------------------CALCULATE LOGIC----------------------------==*/
@@ -204,11 +215,7 @@ function evalRPN(tokens) {
 
 function calculate(expr) {
     const normalized = normalizeExpression(expr);
-
-    const tokens = tokenize(normalized);
-    console.log(tokens);
-    insertImplicitMultiplication(tokens);
-    console.log(insertImplicitMultiplication);
+    const tokens = insertImplicitMultiplication(tokenize(normalized));
     const rpn = toRPN(tokens);
     return evalRPN(rpn);
 }

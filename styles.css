@@ -1,17 +1,32 @@
 :root {
-    --main-color: #1c1c1c;
+    --background-color: #32396b;
+    --main-calculator-color: #1c1c1c;
     --default-buttons-color: #333;
     --operator-buttons-color: #f59e42;
     --top-row-buttons-color: #a5a5a5;
     --btn-size: 61px;
+    --input-field-color: #1c1c1c;
+    --input-field-text-color: #fff;
+    --button-background-color: #333;
+    --button-text-color: #fff;
 
+    --font-main: "Roboto", sans-serif;
+}
+
+:root.white {
+    --background-color: #ebe2cc;
+    --main-calculator-color: #fff;
+    --input-field-color: #fff;
+    --input-field-text-color: #1c1c1c;
+    --button-background-color: #a3a2a0;
+    --button-text-color: #171615;
 }
 
 *, *::after, *::before {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: "Roboto", sans-serif;
+    font-family: var(--font-main)
 }
 
 body {
@@ -21,21 +36,39 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #ece;
-    
+    background: var(--background-color);
+    transition: background 1s ease, color 1s ease;
 }
+
 
 .calculator {
     width: 320px;
-    background-color: var(--main-color);;
+    background-color: var(--main-calculator-color);;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
     gap: 15px;
     border-radius: 35px;
     padding: 20px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.75);
+    transition: background 1s ease;
+
 }
 
+#theme-toggle {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+#theme-toggle img {
+    width: 40px;
+    height: 40px;
+}
 
 #previous {
     min-height: 24px;
@@ -52,10 +85,11 @@ body {
     font-size: 28px;
     text-align: right;
     padding: 10px;
-    background: #1c1c1c;
+    background: var(--input-field-color);
     border: none;
-    color: #fff;
-    border-radius: 0 0 5px 5px;
+    color: var(--input-field-text-color);
+    border-radius: 50px;
+    transition: background 1s ease, color 1s ease;
 }
 
 #input-field:focus {
@@ -84,8 +118,8 @@ button {
     border-radius: 50%;
     border: none;
     font-size: 1.4rem;
-    background: #333;
-    color: #fff;
+    background: var(--button-background-color);
+    color: var(--button-text-color);
     cursor: pointer;
     transition: 0.15s; 
     font-weight: 400;
