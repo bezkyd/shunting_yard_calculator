@@ -66,10 +66,15 @@ document.addEventListener('keydown', (event) => {
 
 function appendValue(value) {
     const lastChar = currentInput.slice(-1);
-    const operators = ['+', '-', 'x', '÷', '.', '/'];
+    const operators = ['+', '-', 'x', '÷', '/'];
 
     if (operators.includes(value) && operators.includes(lastChar)) return;
 
+    if (value === '.') {
+        const number = currentInput.split(/[+\-x÷/*()]/);
+        const currentNumber = number[number.length - 1];
+        if (currentNumber.includes('.')) return;
+    }
     currentInput += value;
     updateDisplay();
 }
