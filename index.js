@@ -129,7 +129,8 @@ function toRPN(tokens) {
         "+": 1,
         "-": 1,
         "*": 2,
-        "/": 2
+        "/": 2,
+        "u": 3
     };
 
     for (let token of tokens) {
@@ -170,6 +171,29 @@ function toRPN(tokens) {
     return output;
 }
 
+function handeUnaryMinus (tokens) {
+    const result = [];
+
+    for (let i = 0; i < tokens.length; i++) {
+        const token = tokens[i];
+
+        if (token === '-') {
+            const prevToken = tokens[i-1];
+            const isUnary = 
+                i === 0 || // rule #1: in the beginning of expression
+                prevToken === '(' || // rule #2: after (
+                ['+', '-', '*', '/'].includes(prevToken); // rule #3: after an operator 
+
+            if(isUnary) {
+                result.push('u');
+                continue; // proceed to the next token
+            }
+        }
+        result.push(token) // if it's not unary minus, leave as it is
+    }
+    return result; 
+}
+
 function insertImplicitMultiplication(tokens) {
     const result = []
 
@@ -198,6 +222,10 @@ function evalRPN(tokens) {
         if(!isNaN(token)) {
             stack.push(Number(token));
         }
+        else if(token === 'u') {
+            const a = stack.pop();
+            stack.push(-a);
+        }
         else {
             const b = stack.pop();
             const a = stack.pop();
@@ -215,8 +243,14 @@ function evalRPN(tokens) {
 
 function calculate(expr) {
     const normalized = normalizeExpression(expr);
-    const tokens = insertImplicitMultiplication(tokenize(normalized));
+    let tokens = tokenize(normalized);
+    tokens = handeUnaryMinus(tokens);
+    tokens = insertImplicitMultiplication(tokens);
     const rpn = toRPN(tokens);
     return evalRPN(rpn);
 }
+
+
+
+
 
