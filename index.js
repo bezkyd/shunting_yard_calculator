@@ -7,10 +7,6 @@ let currentInput = '';
 
 toggleBtn.addEventListener("click", () => {
     document.documentElement.classList.toggle("white");
-
-    if(document.documentElement.classList.contains("white")) {
-        toggleIcon = ""
-    }
 })
 
 buttonsGroup.addEventListener('click', (event) => {
@@ -23,7 +19,7 @@ buttonsGroup.addEventListener('click', (event) => {
 });
 
 function handleInput(value) {
-    const operators = ['+', '-', '/', '*', '(', ')', '.', 'x', '÷' ];
+    const operators = ['+', '-', '/', '*', '(', ')', '.', 'x', '÷'];
     if (value === "C") {
         allClear();
     } 
@@ -68,7 +64,11 @@ function appendValue(value) {
     const lastChar = currentInput.slice(-1);
     const operators = ['+', '-', 'x', '÷', '/'];
 
-    if (operators.includes(value) && operators.includes(lastChar)) return;
+    if (operators.includes(value) && operators.includes(lastChar)) {
+        currentInput = currentInput.slice(0, -1) + value;
+        updateDisplay();
+        return;
+    }
 
     if (value === '.') {
         const number = currentInput.split(/[+\-x÷/*()]/);
@@ -239,7 +239,7 @@ function evalRPN(tokens) {
                 case '+': stack.push(a + b); break;
                 case '-': stack.push(a - b); break;
                 case '*': stack.push(a * b); break;
-                case '/': stack.push(a / b); break;
+                case '/': stack.push(a / b); break;         
             }
         }
     }
