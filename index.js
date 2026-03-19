@@ -54,7 +54,7 @@ document.addEventListener('keydown', (event) => {
         handleInput('x')
     } else if (key === '/') {
         event.preventDefault();
-        handleInput(key);
+        handleInput('÷');
     } else if (key === ' ') {
         handleInput(key);
     }
