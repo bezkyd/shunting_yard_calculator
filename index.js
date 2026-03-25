@@ -2,12 +2,29 @@ const inputField = document.querySelector("#input-field");
 const buttonsGroup = document.querySelector("#buttons-group");
 const toggleBtn = document.querySelector("#theme-toggle");
 const toggleIcon = document.querySelector("img");
+const previousDisplay = document.querySelector("#previous");
 
 let currentInput = '';
 
+
+previousDisplay.addEventListener("click", () => {
+
+});
+
+inputField.addEventListener('paste', (event) => {
+    event.preventDefault();
+    let pastedText = (event.clipboardData || window.clipboardData).getData('text');
+    pastedText = pastedText.replace(/\s+/g, '').replace(/,/g, '.');
+    const sanitizedText = pastedText.replace(/[^0-9+\-*/x÷%().]/g, ''); 
+if (sanitizedText) {
+        currentInput += sanitizedText;
+        updateDisplay();
+    }
+});
+
 toggleBtn.addEventListener("click", () => {
     document.documentElement.classList.toggle("white");
-})
+});
 
 buttonsGroup.addEventListener('click', (event) => {
     const button = event.target;
@@ -19,7 +36,7 @@ buttonsGroup.addEventListener('click', (event) => {
 });
 
 function handleInput(value) {
-    const operators = ['+', '-', '/', '*', '(', ')', '.', 'x', '÷'];
+    const operators = ['+', '-', '/', '*', '(', ')', '%', '.', 'x', '÷'];
     if (value === "C") {
         allClear();
     } 
@@ -38,7 +55,7 @@ document.addEventListener('keydown', (event) => {
     const key = event.key; // Получаем символ нажатой клавиши
 
     // 1. Цифры и операторы (совпадают с текстом на кнопках)
-    const validKeys = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '+', '-', '(', ')'];
+    const validKeys = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '+', '-', '(', ')', '%'];
     
     // 2. Специальные клавиши
     if (validKeys.includes(key)) {
@@ -62,7 +79,7 @@ document.addEventListener('keydown', (event) => {
 
 function appendValue(value) {
     const lastChar = currentInput.slice(-1);
-    const operators = ['+', '-', 'x', '÷', '/'];
+    const operators = ['+', '-', 'x', '÷', '/', '%'];
 
     if (operators.includes(value) && operators.includes(lastChar)) {
         currentInput = currentInput.slice(0, -1) + value;
@@ -134,6 +151,7 @@ function toRPN(tokens) {
         "+": 1,
         "-": 1,
         "*": 2,
+        "%": 2,
         "/": 2,
         "u": 3
     };
@@ -239,7 +257,8 @@ function evalRPN(tokens) {
                 case '+': stack.push(a + b); break;
                 case '-': stack.push(a - b); break;
                 case '*': stack.push(a * b); break;
-                case '/': stack.push(a / b); break;         
+                case '/': stack.push(a / b); break;       
+                case '%': stack.push((a * b) / 100); break;  
             }
         }
     }
