@@ -5,13 +5,9 @@ const toggleIcon = document.querySelector("img");
 const previousDisplay = document.querySelector("#previous");
 
 let currentInput = '';
+let lastExpression = "";
 
-
-previousDisplay.addEventListener("click", () => {
-
-});
-
-inputField.addEventListener('paste', (event) => {
+document.addEventListener('paste', (event) => {
     event.preventDefault();
     let pastedText = (event.clipboardData || window.clipboardData).getData('text');
     pastedText = pastedText.replace(/\s+/g, '').replace(/,/g, '.');
@@ -20,6 +16,24 @@ if (sanitizedText) {
         currentInput += sanitizedText;
         updateDisplay();
     }
+});
+
+document.addEventListener('copy', (event) => {
+    event.preventDefault();
+    const textToCopy = currentInput || '0';
+    if(textToCopy) {
+        event.clipboardData.setData('text/plain', textToCopy);
+    }
+})
+
+document.addEventListener('cut', (event) => {
+    event.preventDefault();
+    const textToCopy = currentInput || '0';
+    if (event.clipboardData) {
+        event.clipboardData.setData('text/plain', textToCopy);
+    }
+    currentInput = '';
+    updateDisplay();
 });
 
 toggleBtn.addEventListener("click", () => {
@@ -45,23 +59,19 @@ function handleInput(value) {
         appendValue(value);
     }
     else if (value === "=") { 
-        console.log(currentInput);
         currentInput = String(calculate(currentInput));
         updateDisplay();
     }
 }
 
 document.addEventListener('keydown', (event) => {
-    const key = event.key; // Получаем символ нажатой клавиши
-
-    // 1. Цифры и операторы (совпадают с текстом на кнопках)
+    const key = event.key; 
     const validKeys = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '+', '-', '(', ')', '%'];
     
-    // 2. Специальные клавиши
     if (validKeys.includes(key)) {
         handleInput(key);
     } else if (key === 'Enter' || key === '=') {
-        event.preventDefault(); // Чтобы не скроллило страницу
+        event.preventDefault(); 
         handleInput('=');
     } else if (key === 'Backspace') {
         handleInput('DEL');
@@ -100,8 +110,6 @@ function updateDisplay() {
     inputField.value = currentInput || '0';
 }
 
-
-// function isValidChar(value) { pass; }
 function allClear () { 
     currentInput = ''; 
     updateDisplay();
