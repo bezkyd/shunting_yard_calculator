@@ -7,6 +7,7 @@ const previousDisplay = document.querySelector("#previous");
 let currentInput = '';
 let lastExpression = "";
 
+
 document.addEventListener('paste', (event) => {
     event.preventDefault();
     let pastedText = (event.clipboardData || window.clipboardData).getData('text');
@@ -59,6 +60,7 @@ function handleInput(value) {
         appendValue(value);
     }
     else if (value === "=") { 
+        lastExpression = currentInput;
         currentInput = String(calculate(currentInput));
         updateDisplay();
     }
@@ -107,11 +109,13 @@ function appendValue(value) {
 }
 
 function updateDisplay() {
+    previousDisplay.textContent = lastExpression || '';
     inputField.value = currentInput || '0';
 }
 
 function allClear () { 
     currentInput = ''; 
+    lastExpression = '';
     updateDisplay();
 }
 
