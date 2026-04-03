@@ -3,10 +3,13 @@ const buttonsGroup = document.querySelector("#buttons-group");
 const toggleBtn = document.querySelector("#theme-toggle");
 const toggleIcon = document.querySelector("img");
 const previousDisplay = document.querySelector("#previous");
+const historyList = document.querySelector("#history-list");
+const clearHistoryBtn = document.querySelector("#clear-history");
 
 let currentInput = '';
 let lastExpression = "";
 
+let history = [];
 
 document.addEventListener('paste', (event) => {
     event.preventDefault();
@@ -50,6 +53,41 @@ buttonsGroup.addEventListener('click', (event) => {
     handleInput(value);
 });
 
+previousDisplay.addEventListener("click", () => {
+    if (!lastExpression) return;
+    const temp = currentInput;
+    currentInput = lastExpression;
+    const hasOperators = /[+\-*/x÷%]/.test(temp);
+    lastExpression = (hasOperators && temp !== "0") ? temp : "";
+    updateDisplay();
+});
+
+clearHistoryBtn.addEventListener("click", () => {
+    history = []; 
+    renderHistory(); 
+});
+
+function addHistory(expression, result) {
+    history.unshift({expression, result});
+    renderHistory();
+}
+
+function renderHistory() {
+    historyList.innerHTML = '';
+
+    history.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = `${item.expression} = ${item.result}`;
+        li.addEventListener('click', () => {
+            currentInput = item.result;
+            lastExpression = item.expression;
+            updateDisplay();
+        });
+
+        historyList.appendChild(li);
+    });
+}
+
 function handleInput(value) {
     const operators = ['+', '-', '/', '*', '(', ')', '%', '.', 'x', '÷'];
     if (value === "C") {
@@ -60,8 +98,13 @@ function handleInput(value) {
         appendValue(value);
     }
     else if (value === "=") { 
-        lastExpression = currentInput;
-        currentInput = String(calculate(currentInput));
+        const hasOperators = /[+\-*/x÷%]/.test(currentInput);
+        const result = String(calculate(currentInput));
+        if (hasOperators && currentInput !== "0") {
+            lastExpression = currentInput;
+            addHistory(lastExpression, result);
+        }
+        currentInput = result;
         updateDisplay();
     }
 }
