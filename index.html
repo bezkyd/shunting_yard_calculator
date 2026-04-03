@@ -9,10 +9,15 @@
 <body>
     <button id="theme-toggle"><img src="img/theme-toggle.png" alt="Switch theme toggle"></button>
     <div class="calculator">
-        <div id="history-panel">
-            <h3>History</h3>
-            <ul id="history-list"></ul>
-            <button id="clear-history">Clear history</button>
+        <div class="history-wrapper">
+            <button id="toggle-history">📜</button>
+            <div id="history-container" class="hidden">
+                <div class="history-header">
+                    <h4>Previous Expressions</h4>
+                    <button id="clear-history">Очистити все</button>
+                </div>
+                <ul class="history-list"></ul>
+            </div>
         </div>
         <div id="previous"></div>
         <input type="text" id="input-field" placeholder="0">   
