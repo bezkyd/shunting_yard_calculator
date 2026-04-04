@@ -3,13 +3,28 @@ const buttonsGroup = document.querySelector("#buttons-group");
 const toggleBtn = document.querySelector("#theme-toggle");
 const toggleIcon = document.querySelector("img");
 const previousDisplay = document.querySelector("#previous");
-const historyList = document.querySelector("#history-list");
+const historyList = document.querySelector(".history-list");
 const clearHistoryBtn = document.querySelector("#clear-history");
+const historyToggleBtn = document.getElementById('toggle-history');
+const historyContainer = document.querySelector("#history-container");
 
 let currentInput = '';
 let lastExpression = "";
-
 let history = [];
+
+// Додаємо атрибут для доступності (хороший тон)
+historyToggleBtn.setAttribute('aria-expanded', 'false');
+
+historyToggleBtn.addEventListener('click', (event) => {
+    event.stopPropagation();
+    historyContainer.classList.toggle("show");
+});
+
+document.addEventListener("click", (event) => {
+    if (!historyContainer.contains(event.target) && event.target !== historyToggleBtn) {
+        historyContainer.classList.add("show");
+    }
+});
 
 document.addEventListener('paste', (event) => {
     event.preventDefault();
@@ -75,6 +90,11 @@ function addHistory(expression, result) {
 function renderHistory() {
     historyList.innerHTML = '';
 
+    if (history.length === 0) {
+        historyList.innerHTML = '<li style="text-align:center; color:gray;">Історія порожня</li>';
+        return;
+    }
+
     history.forEach(item => {
         const li = document.createElement('li');
         li.textContent = `${item.expression} = ${item.result}`;
@@ -82,6 +102,7 @@ function renderHistory() {
             currentInput = item.result;
             lastExpression = item.expression;
             updateDisplay();
+            historyContainer.classList.add("hidden");
         });
 
         historyList.appendChild(li);
