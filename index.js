@@ -18,13 +18,18 @@ historyToggleBtn.setAttribute('aria-expanded', 'false');
 historyToggleBtn.addEventListener('click', (event) => {
     event.stopPropagation();
     historyContainer.classList.toggle("show");
+    historyContainer.classList.toggle("hidden"); // Добавляем переключение hidden
 });
 
 document.addEventListener("click", (event) => {
-    if (!historyContainer.contains(event.target) && event.target !== historyToggleBtn) {
-        historyContainer.classList.add("show");
+    // Проверяем, что клик был НЕ внутри окна истории и НЕ по кнопке открытия
+    if (!historyContainer.contains(event.target) && !historyToggleBtn.contains(event.target)) {
+        // Прячем окно
+        historyContainer.classList.remove("show"); 
+        historyContainer.classList.add("hidden"); // так как в HTML у вас изначально class="hidden"
     }
 });
+
 
 document.addEventListener('paste', (event) => {
     event.preventDefault();
@@ -89,19 +94,25 @@ function addHistory(expression, result) {
 
 function renderHistory() {
     historyList.innerHTML = '';
-
     if (history.length === 0) {
-        historyList.innerHTML = '<li style="text-align:center; color:gray;">Історія порожня</li>';
+        historyList.innerHTML = '<li style="text-align:center; color:gray;">Empty</li>';
+        clearHistoryBtn.style.display = 'none'; 
         return;
     }
+
+    clearHistoryBtn.style.display = ''; 
 
     history.forEach(item => {
         const li = document.createElement('li');
         li.textContent = `${item.expression} = ${item.result}`;
+        
         li.addEventListener('click', () => {
-            currentInput = item.result;
-            lastExpression = item.expression;
+            currentInput = String(item.expression); 
+            lastExpression = "";
+            
             updateDisplay();
+            
+            historyContainer.classList.remove("show");
             historyContainer.classList.add("hidden");
         });
 
@@ -350,7 +361,7 @@ function calculate(expr) {
     return evalRPN(rpn);
 }
 
-
+renderHistory();
 
 
 
