@@ -12,21 +12,18 @@ let currentInput = '';
 let lastExpression = "";
 let history = [];
 
-// Додаємо атрибут для доступності (хороший тон)
 historyToggleBtn.setAttribute('aria-expanded', 'false');
 
 historyToggleBtn.addEventListener('click', (event) => {
     event.stopPropagation();
     historyContainer.classList.toggle("show");
-    historyContainer.classList.toggle("hidden"); // Добавляем переключение hidden
+    historyContainer.classList.toggle("hidden");
 });
 
 document.addEventListener("click", (event) => {
-    // Проверяем, что клик был НЕ внутри окна истории и НЕ по кнопке открытия
     if (!historyContainer.contains(event.target) && !historyToggleBtn.contains(event.target)) {
-        // Прячем окно
         historyContainer.classList.remove("show"); 
-        historyContainer.classList.add("hidden"); // так как в HTML у вас изначально class="hidden"
+        historyContainer.classList.add("hidden");
     }
 });
 
